@@ -2,15 +2,28 @@ import "antd/dist/antd.css"
 
 import React, { ReactNode, useMemo, useState } from "react"
 import ReactDOM from "react-dom"
-import { Input, InputNumber, List } from "antd"
+import { Input, List, PageHeader } from "antd"
 import * as primeLib from "./lib/primeLib"
+import { githubCornerHTML } from "./lib/githubCorner"
+import { repository, version } from "../package.json"
 
 function main() {
-    let appRoot = document.getElementById("appRoot")
-    ReactDOM.render(React.createElement(UserInterface), appRoot)
+    let div = document.createElement("div")
+    div.innerHTML = githubCornerHTML(repository.url, version)
+    document.body.appendChild(div)
+
+    let title = document.getElementsByClassName("title")[0].textContent
+    let subtitle = document.getElementsByClassName("subtitle")[0].textContent
+
+    let titleDiv = document.getElementById("title")!
+    titleDiv.parentElement!.removeChild(titleDiv)
+
+    let appRoot = document.getElementById("appRoot")!
+    ReactDOM.render(React.createElement(UserInterface, { title, subtitle }), appRoot)
 }
 
-function UserInterface() {
+function UserInterface(prop) {
+    let { title, subtitle } = prop
     let [target, setTarget] = useState(1n)
     let [badInput, setBadInput] = useState("")
 
@@ -46,6 +59,12 @@ function UserInterface() {
 
     return (
         <div>
+            <PageHeader
+                ghost={false}
+                onBack={() => window.location.assign(".")}
+                title={title}
+                subTitle={subtitle}
+            ></PageHeader>
             <Input
                 onChange={(event) => {
                     let v = event.target.value

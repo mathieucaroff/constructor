@@ -2,6 +2,10 @@
   "name": "factorization",
   "version": "1.0.0",
   "author": "Mathieu CAROFF <mathieu.caroff@free.fr>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mathieucaroff/factorize.git"
+  },
   "license": "CC0-1.0",
     "scripts": {
         "check": "tsc --noEmit",
