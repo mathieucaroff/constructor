@@ -26,7 +26,7 @@ function calculate(inputNum: bigint, result: bigint[] = [], repeat = true): bigi
         if (num % x) {
             x = 5n
             let add = 2n
-            while (num % x && x < squareRoot) {
+            while (num % x && x <= squareRoot) {
                 // search numbers: 5, 7, 11, 13, 17, 19, 23...
                 x += add
                 // add each time: 2, 4, 2, 4, 2, 4, 2...
@@ -35,7 +35,7 @@ function calculate(inputNum: bigint, result: bigint[] = [], repeat = true): bigi
         }
     }
 
-    x = x < squareRoot ? x : num
+    x = x <= squareRoot ? x : num
 
     if (!repeat) {
         const index = result.indexOf(x)
