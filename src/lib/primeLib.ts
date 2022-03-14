@@ -1,3 +1,12 @@
+// A modified version of:
+// https://www.npmjs.com/package/primes-and-factors
+// https://github.com/sebas095/primes-and-factors/blob/master/lib/index.js
+// https://github.com/sebas095/primes-and-factors/blob/2d8398352c6cc6949c38cf73f2156ac9262fb771/lib/index.js
+//
+// Modified to use BigInt-s and types. Calculations on double-s are limited
+// to a precision of 15 decimals. BigInt-s enable calculations for numbers
+// up to 18 digits. Past this, calculation easily take minutes to complete.
+
 export function isPrime(num: bigint) {
     // Non integer or any number less than 2 is not prime
     if (num < 2n) return false

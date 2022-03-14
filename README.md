@@ -3,8 +3,8 @@
 Your basic factorization program, with 3 display format:
 
 - Repeating primes as many times as they appear
-- Using the double-star power (`**`) to present exponents
-- Using formatting to present the exponents
+- Using the double-star power (`**`) to represent exponents
+- Using formatting to represent the exponents
 
 For example, `8943411348` gives the following three outputs:
 

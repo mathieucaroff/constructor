@@ -1,5 +1,5 @@
-.bodyDiv {
-    margin: 3em;
+body {
+    padding: 3em;
 }
 
 #appRoot * {
