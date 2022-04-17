@@ -10,8 +10,9 @@
   "scripts": {
     "check": "tsc --noEmit",
     "checkwatch": "tsc --noEmit --watch",
-    "build": "parcel build src/factorize.html --public-url factorize.d",
-    "serve": "parcel src/factorize.html"
+    "build": "parcel build src/index.html --dist-dir public",
+    "mcabuild": "parcel build src/index.html --public-url factorize.d",
+    "serve": "parcel src/index.html"
   },
   "devDependencies": {
     "@types/react": "^17.0.39",
