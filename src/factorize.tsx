@@ -24,7 +24,7 @@ function main() {
 
 function UserInterface(prop) {
     let { title, subtitle } = prop
-    let [target, setTarget] = useState(1n)
+    let [target, setTarget] = useState(2n)
     let [badInput, setBadInput] = useState("")
 
     let primeObject = useMemo(() => {
@@ -50,8 +50,11 @@ function UserInterface(prop) {
             visualList.push(<span key={prime}>{prime} </span>)
         }
     })
-
-    if (target < 2) {
+    if (target <= -2) {
+        repetitionList[0] = "-" + repetitionList[0]
+        representationList[0] = "-" + representationList[0]
+        visualList.unshift(<span key={"-"}>{"-"}</span>)
+    } else if (target < 2) {
         repetitionList.push(`${target}`)
         representationList.push(`${target}`)
         visualList.push(<span key={"" + target}>{"" + target}</span>)
@@ -66,6 +69,7 @@ function UserInterface(prop) {
                 subTitle={subtitle}
             ></PageHeader>
             <Input
+                defaultValue={2}
                 onChange={(event) => {
                     let v = event.target.value
                     if (v.length <= 18) {
