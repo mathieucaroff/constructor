@@ -72,9 +72,14 @@ function UserInterface(prop) {
                 defaultValue={2}
                 onChange={(event) => {
                     let v = event.target.value
+
                     if (v.length <= 18) {
-                        setTarget(BigInt(v))
-                        setBadInput("")
+                        try {
+                            setTarget(BigInt(v))
+                            setBadInput("")
+                        } catch {
+                            setBadInput("Invalid number")
+                        }
                     } else {
                         setBadInput("The input number cannot be longer than 18 digits")
                     }
