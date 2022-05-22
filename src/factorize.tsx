@@ -2,7 +2,7 @@ import "antd/dist/antd.css"
 
 import React, { ReactNode, useMemo, useState } from "react"
 import ReactDOM from "react-dom"
-import { Input, List, PageHeader } from "antd"
+import { Input, List, PageHeader, Switch, Table } from "antd"
 import * as primeLib from "./lib/primeLib"
 import { githubCornerHTML } from "./lib/githubCorner"
 import { repository, version } from "../package.json"
@@ -25,6 +25,7 @@ function main() {
 function UserInterface(prop) {
     let { title, subtitle } = prop
     let [target, setTarget] = useState(2n)
+    let [showTitles, setShowTitles] = useState(false)
     let [badInput, setBadInput] = useState("")
 
     let primeObject = useMemo(() => {
@@ -34,9 +35,11 @@ function UserInterface(prop) {
     let repetitionList = [] as string[]
     let representationList = [] as string[]
     let visualList = [] as ReactNode[]
+    let shortList = [] as string[]
 
     Object.entries(primeObject).map(([prime, exponent]) => {
         repetitionList.push(...Array(Number(exponent)).fill(prime))
+        shortList.push(`${(+prime) ** exponent}`)
         if (exponent > 1) {
             representationList.push(`${prime}**${exponent}`)
             visualList.push(
@@ -54,10 +57,12 @@ function UserInterface(prop) {
         repetitionList[0] = "-" + repetitionList[0]
         representationList[0] = "-" + representationList[0]
         visualList.unshift(<span key={"-"}>{"-"}</span>)
+        shortList[0] = "-" + shortList[0]
     } else if (target < 2) {
         repetitionList.push(`${target}`)
         representationList.push(`${target}`)
         visualList.push(<span key={"" + target}>{"" + target}</span>)
+        shortList.push(`${target}`)
     }
 
     return (
@@ -86,25 +91,43 @@ function UserInterface(prop) {
                 }}
                 style={{ width: "300px" }}
             />
+            <label style={{ fontSize: "small", margin: "10px" }}>Show Line Titles</label>
+            <Switch
+                checked={showTitles}
+                onClick={() => {
+                    setShowTitles(!showTitles)
+                }}
+            />
             {badInput ? (
                 <em>
                     <br />
                     {badInput}
                 </em>
             ) : null}
-            <List>
-                <List.Item>
-                    <code>{repetitionList.join(" * ")}</code>
-                </List.Item>
-                <List.Item>
-                    <code>{representationList.join(" * ")}</code>
-                </List.Item>
-                <List.Item>
-                    <div>
-                        <code>{visualList}</code>
-                    </div>
-                </List.Item>
-            </List>
+
+            <Table
+                columns={[
+                    ...(showTitles ? [{ dataIndex: "title", width: 300 }] : []),
+                    { dataIndex: "value", render: (text) => <code>{text}</code> },
+                ]}
+                dataSource={[
+                    { title: "Repeating prime", value: repetitionList.join(" * ") },
+                    {
+                        title: "Prime power exponent",
+                        value: representationList.join(" * "),
+                    },
+                    {
+                        title: "Prime and exponent",
+                        value: visualList,
+                    },
+                    {
+                        title: "Power result",
+                        value: shortList.join(" * "),
+                    },
+                ]}
+                showHeader={false}
+                pagination={{ position: [] }}
+            />
         </div>
     )
 }
