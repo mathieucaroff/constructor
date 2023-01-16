@@ -1,8 +1,8 @@
-import "antd/dist/antd.css"
+import "@picocss/pico"
 
 import React, { ReactNode, useMemo, useState } from "react"
 import ReactDOM from "react-dom"
-import { Input, List, PageHeader, Switch, Table } from "antd"
+// import { Input, List, PageHeader, Switch, Table } from "antd"
 import * as primeLib from "./lib/primeLib"
 import { githubCornerHTML } from "./lib/githubCorner"
 import { repository, version } from "../package.json"
@@ -12,18 +12,11 @@ function main() {
     div.innerHTML = githubCornerHTML(repository.url, version)
     document.body.appendChild(div)
 
-    let title = document.getElementsByClassName("title")[0].textContent
-    let subtitle = document.getElementsByClassName("subtitle")[0].textContent
-
-    let titleDiv = document.getElementById("title")!
-    titleDiv.parentElement!.removeChild(titleDiv)
-
     let appRoot = document.getElementById("appRoot")!
-    ReactDOM.render(React.createElement(UserInterface, { title, subtitle }), appRoot)
+    ReactDOM.render(React.createElement(UserInterface), appRoot)
 }
 
-function UserInterface(prop) {
-    let { title, subtitle } = prop
+function UserInterface() {
     let [target, setTarget] = useState(2n)
     let [showTitles, setShowTitles] = useState(false)
     let [badInput, setBadInput] = useState("")
@@ -66,14 +59,8 @@ function UserInterface(prop) {
     }
 
     return (
-        <div>
-            <PageHeader
-                ghost={false}
-                onBack={() => window.location.assign(".")}
-                title={title}
-                subTitle={subtitle}
-            ></PageHeader>
-            <Input
+        <>
+            <input
                 defaultValue={2}
                 onChange={(event) => {
                     let v = event.target.value
@@ -91,13 +78,20 @@ function UserInterface(prop) {
                 }}
                 style={{ width: "300px" }}
             />
-            <label style={{ fontSize: "small", margin: "10px" }}>Show Line Titles</label>
-            <Switch
-                checked={showTitles}
-                onClick={() => {
-                    setShowTitles(!showTitles)
-                }}
-            />
+            <div>
+                <input
+                    id="showTitles"
+                    type="checkbox"
+                    checked={showTitles}
+                    onClick={() => {
+                        setShowTitles(!showTitles)
+                    }}
+                />
+                <label htmlFor="showTitles" style={{ fontSize: "small", margin: "10px" }}>
+                    Show Line Titles
+                </label>
+            </div>
+
             {badInput ? (
                 <em>
                     <br />
@@ -105,7 +99,33 @@ function UserInterface(prop) {
                 </em>
             ) : null}
 
-            <Table
+            <table>
+                {[
+                    { title: "Repeating prime", value: repetitionList.join(" * ") },
+                    {
+                        title: "Prime power exponent",
+                        value: representationList.join(" * "),
+                    },
+                    {
+                        title: "Prime and exponent",
+                        value: visualList,
+                    },
+                    {
+                        title: "Power result",
+                        value: shortList.join(" * "),
+                    },
+                ].map(({ title, value }) => {
+                    let titleElement = showTitles ? <th>{title}</th> : null
+                    return (
+                        <tr>
+                            {titleElement}
+                            <td>{value}</td>
+                        </tr>
+                    )
+                })}
+            </table>
+
+            {/* <Table
                 columns={[
                     ...(showTitles ? [{ dataIndex: "title", width: 300 }] : []),
                     { dataIndex: "value", render: (text) => <code>{text}</code> },
@@ -127,8 +147,8 @@ function UserInterface(prop) {
                 ]}
                 showHeader={false}
                 pagination={{ position: [] }}
-            />
-        </div>
+            /> */}
+        </>
     )
 }
 
