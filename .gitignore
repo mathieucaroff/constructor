@@ -1,7 +1,10 @@
 /*
 !/src
+!/.editorconfig
 !/.gitignore
+!/.mocharc.json
 !/.prettierrc
+!/.yarnrc.yml
 !/package.json
 !/README.md
 !/tsconfig.json
