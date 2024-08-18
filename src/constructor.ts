@@ -1,10 +1,11 @@
-import { Operation, SolutionObject } from "./type"
+import { MathList, Operation, SolutionObject } from "./type"
 import { addSolution, baseDecomposition, factorization } from "./util"
 
 export function createConstructor(
   operationSet: Record<Operation, boolean>,
   baseArray: number[],
   target: number,
+  option: { baseDecompositionOnly: boolean } = { baseDecompositionOnly: false },
 ) {
   return {
     obtain() {
@@ -24,23 +25,33 @@ export function createConstructor(
           if (operationSet.subtract) {
             baseArray.forEach((p) => {
               const mathList = baseDecomposition(target + p, n, { 10: [5, 5, "add"] })
-              if (mathList.length === 0) {
-                throw new Error(`empty mathList for target ${target}, offset ${p}, base ${n}`)
-              }
               addSolution(solutionObject, [...mathList, p, "subtract"])
             })
           }
         }
       })
 
-      if (target >= 1) {
-        const solver = (target: number, baseArray: number[]) => {
-          return createConstructor(operationSet, baseArray, target).obtain()[0].math
-        }
-        factorization(target, baseArray, solver).forEach((solution) =>
-          addSolution(solutionObject, solution),
-        )
+      if (option.baseDecompositionOnly) {
+        return solutionObject[target]
       }
+
+      const solver = (target: number, baseArray: number[]) => {
+        return createConstructor(operationSet, baseArray, target, {
+          baseDecompositionOnly: true,
+        }).obtain()[0].math
+      }
+      const addFactorisationSolutionSet = (target: number, extra: MathList) => {
+        if (target >= 1) {
+          factorization(target, baseArray, solver).forEach((mathList) =>
+            addSolution(solutionObject, [...mathList, ...extra]),
+          )
+        }
+      }
+      addFactorisationSolutionSet(target, [])
+      baseArray.forEach((p) => {
+        addFactorisationSolutionSet(target + p, [p, "subtract"])
+        addFactorisationSolutionSet(target - p, [p, "add"])
+      })
 
       return solutionObject[target]
     },
