@@ -1,13 +1,12 @@
 import { useMemo, useState } from "react"
+import { Checkbox } from "./checkbox"
 import { createConstructor } from "./constructor"
 import { Input } from "./input"
 import { Operation } from "./type"
-import { Checkbox } from "./checkbox"
-import { resolveMath } from "./util"
 
 export function UserInterface() {
   let [target, setTarget] = useState("0")
-  let [operationSet, setOperationSet] = useState({ add: true } as Record<Operation, boolean>)
+  let [operationSet, setOperationSet] = useState(() => ({} as Record<Operation, boolean>))
   let [baseString, setBaseString] = useState("1 2")
   let solutionArray = useMemo(
     () =>
@@ -28,7 +27,7 @@ export function UserInterface() {
           <Checkbox
             name={`operation.${operationName}`}
             setValue={(checked) => {
-              setOperationSet({ ...operationSet, [operationName]: Boolean(checked) })
+              setOperationSet((set) => ({ ...set, [operationName]: Boolean(checked) }))
             }}
           />
           {operationName}

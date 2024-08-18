@@ -52,7 +52,7 @@ export function computeComplexity(math: MathList): number {
   })
 
   Object.values(countRecord).forEach((count) => {
-    complexity += Math.ceil(count / 2)
+    complexity += Math.ceil(count / 4)
   })
 
   return complexity
@@ -64,6 +64,8 @@ export function resolveMath(math: MathList): number {
     if (typeof piece === "number") {
       stack.push(piece)
     } else {
+      const b = stack.pop()!
+      const a = stack.pop()!
       stack.push(
         {
           add: (a: number, b: number) => a + b,
@@ -72,7 +74,7 @@ export function resolveMath(math: MathList): number {
           divide: (a: number, b: number) => Math.floor(a / b),
           remainder: (a: number, b: number) => a % b,
           exponent: (a: number, b: number) => a ** b,
-        }[piece](stack.pop()!, stack.pop()!),
+        }[piece](a, b),
       )
     }
   })
@@ -95,16 +97,12 @@ export function baseDecomposition(
   let math: MathList = []
   let decomposition = target.toString(base).split("")
 
-  const replace = (value) => overrideRecord[value] ?? [value]
+  const replace = (value: number) => overrideRecord[value] ?? [value]
   let multiplicationByBase: MathList = [...replace(base), "multiply"]
 
   let [first, ...list] = decomposition
   let parsedFirst = parseInt(first, base)
-  if (parsedFirst > 1) {
-    math.push(...replace(parsedFirst), ...multiplicationByBase)
-  } else {
-    math.push(...replace(base))
-  }
+  math.push(...replace(parsedFirst), ...multiplicationByBase)
   list.forEach((digit: string) => {
     let parsedDigit = parseInt(digit, base)
     if (parsedDigit > 0) {

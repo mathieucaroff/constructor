@@ -1,5 +1,5 @@
-import { addSolution, baseDecomposition } from "./util"
 import { Operation, SolutionObject } from "./type"
+import { addSolution, baseDecomposition } from "./util"
 
 export function createConstructor(
   operationSet: Record<Operation, boolean>,
@@ -19,8 +19,17 @@ export function createConstructor(
             addSolution(solutionObject, [n, n, operationName])
           }
         })
-        if (n > 1) {
+        if (n > 1 && operationSet.add && operationSet.multiply) {
           addSolution(solutionObject, baseDecomposition(target, n, { 10: [5, 5, "add"] }))
+          if (operationSet.subtract) {
+            baseArray.forEach((p) => {
+              const mathList = baseDecomposition(target + p, n, { 10: [5, 5, "add"] })
+              if (mathList.length === 0) {
+                throw new Error(`empty mathList for target ${target}, offset ${p}, base ${n}`)
+              }
+              addSolution(solutionObject, [...mathList, p, "subtract"])
+            })
+          }
         }
       })
 

@@ -13,7 +13,8 @@
     "checkwatch": "tsc --noEmit --watch",
     "build": "parcel build src/index.html --dist-dir public",
     "mcabuild": "parcel build src/index.html --public-url constructor.d",
-    "dev": "parcel src/index.html"
+    "dev": "parcel src/index.html",
+    "test": "mocha src/test.ts"
   },
   "devDependencies": {
     "@types/assert": "^1.5.10",
