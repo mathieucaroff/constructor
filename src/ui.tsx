@@ -1,13 +1,23 @@
-import { useMemo, useState } from "react"
+import { ReactNode, useMemo, useState } from "react"
 import { Checkbox } from "./checkbox"
 import { createConstructor } from "./constructor"
 import { Input } from "./input"
 import { Operation } from "./type"
+import { resolveMath } from "./util"
+
+function catchToReactText(f: () => ReactNode) {
+  try {
+    return f()
+  } catch (e) {
+    return <em>{String(e)}</em>
+  }
+}
 
 export function UserInterface() {
   let [target, setTarget] = useState("0")
   let [operationSet, setOperationSet] = useState(() => ({} as Record<Operation, boolean>))
   let [baseString, setBaseString] = useState("1 2")
+  let [mathString, setMathString] = useState("0")
   let solutionArray = useMemo(
     () =>
       createConstructor(
@@ -49,6 +59,25 @@ export function UserInterface() {
           </li>
         ))}
       </ul>
+      <Input
+        name="math"
+        setValue={(value) => {
+          if (value.trim().length > 0) {
+            setMathString(value.trim())
+          }
+        }}
+      />
+      {catchToReactText(() =>
+        resolveMath(
+          mathString.split(" ").map((x) => {
+            const num = Number(x)
+            if (!Number.isNaN(num)) {
+              return num
+            }
+            return x as Operation
+          }),
+        ),
+      )}
     </div>
   )
 }

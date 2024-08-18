@@ -64,18 +64,23 @@ export function resolveMath(math: MathList): number {
     if (typeof piece === "number") {
       stack.push(piece)
     } else {
+      const f = {
+        add: (a: number, b: number) => a + b,
+        multiply: (a: number, b: number) => a * b,
+        subtract: (a: number, b: number) => a - b,
+        divide: (a: number, b: number) => Math.floor(a / b),
+        remainder: (a: number, b: number) => a % b,
+        exponent: (a: number, b: number) => a ** b,
+      }[piece]
+      if (f === undefined) {
+        throw new Error(`unrecognized operator "${piece}"`)
+      }
       const b = stack.pop()!
       const a = stack.pop()!
-      stack.push(
-        {
-          add: (a: number, b: number) => a + b,
-          multiply: (a: number, b: number) => a * b,
-          subtract: (a: number, b: number) => a - b,
-          divide: (a: number, b: number) => Math.floor(a / b),
-          remainder: (a: number, b: number) => a % b,
-          exponent: (a: number, b: number) => a ** b,
-        }[piece](a, b),
-      )
+      if (a === undefined) {
+        throw new Error("math formula containing not enough numbers for operators")
+      }
+      stack.push(f(a, b))
     }
   })
   if (stack.length > 1) {
@@ -115,4 +120,69 @@ export function baseDecomposition(
   math.splice(-size, size) // remove the final multiplication by the base
 
   return math
+}
+
+export function factorization(
+  target: number,
+  baseArray: number[],
+  solver: (target: number, baseArray: number[]) => MathList,
+): MathList[] {
+  if (target < 1) {
+    return []
+  }
+
+  let mathList: MathList = []
+
+  let decomposition = factorizationDecomposition(target)
+  if (decomposition.length < 2) {
+    // The given number is prime and cannot be factorized further
+    return []
+  }
+
+  decomposition.forEach((piece, k) => {
+    if (baseArray.includes(piece)) {
+      mathList.push(piece)
+    } else {
+      mathList.push(...solver(piece, baseArray))
+    }
+    if (k > 0) {
+      mathList.push("multiply")
+    }
+  })
+
+  return [mathList]
+}
+
+export function factorizationDecomposition(target: number): number[] {
+  if (target < 1) {
+    throw new Error("expected target to be at least 1")
+  } else if (target === 1) {
+    return [1]
+  }
+  let decomposition: number[] = []
+  let remaningTarget = target
+
+  while (remaningTarget > 1 && remaningTarget % 2 === 0) {
+    remaningTarget /= 2
+    decomposition.push(2)
+  }
+
+  while (remaningTarget > 1 && remaningTarget % 3 === 0) {
+    remaningTarget /= 3
+    decomposition.push(3)
+  }
+
+  let factor = 5
+  let step = 2
+  while (remaningTarget > 1) {
+    if (remaningTarget % factor === 0) {
+      remaningTarget /= factor
+      decomposition.push(factor)
+    } else {
+      factor += step
+      step ^= 6
+    }
+  }
+
+  return decomposition
 }

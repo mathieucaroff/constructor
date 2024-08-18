@@ -1,5 +1,5 @@
 import { Operation, SolutionObject } from "./type"
-import { addSolution, baseDecomposition } from "./util"
+import { addSolution, baseDecomposition, factorization } from "./util"
 
 export function createConstructor(
   operationSet: Record<Operation, boolean>,
@@ -32,6 +32,15 @@ export function createConstructor(
           }
         }
       })
+
+      if (target >= 1) {
+        const solver = (target: number, baseArray: number[]) => {
+          return createConstructor(operationSet, baseArray, target).obtain()[0].math
+        }
+        factorization(target, baseArray, solver).forEach((solution) =>
+          addSolution(solutionObject, solution),
+        )
+      }
 
       return solutionObject[target]
     },

@@ -8,7 +8,7 @@ export interface InputProp extends React.InputHTMLAttributes<HTMLInputElement> {
 export function Input(inputProp: InputProp) {
   const { setValue: setValueProp, ...remainingProp } = inputProp
 
-  const [value, setValue] = useState(() => localStorage.getItem(inputProp.name)!)
+  const [value, setValue] = useState(() => localStorage.getItem(inputProp.name) ?? "")
 
   useEffect(() => {
     setValueProp(value)
