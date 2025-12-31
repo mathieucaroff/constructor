@@ -58,20 +58,22 @@ export function computeComplexity(math: MathList): number {
   return complexity
 }
 
+const operatorComputer: Record<string, (a: number, b: number) => number> = {
+  add: (a, b) => a + b,
+  multiply: (a, b) => a * b,
+  subtract: (a, b) => a - b,
+  divide: (a, b) => Math.floor(a / b),
+  remainder: (a, b) => a % b,
+  exponent: (a, b) => a ** b,
+}
+
 export function resolveMath(math: MathList): number {
   let stack: number[] = []
   math.forEach((piece) => {
     if (typeof piece === "number") {
       stack.push(piece)
     } else {
-      const f = {
-        add: (a: number, b: number) => a + b,
-        multiply: (a: number, b: number) => a * b,
-        subtract: (a: number, b: number) => a - b,
-        divide: (a: number, b: number) => Math.floor(a / b),
-        remainder: (a: number, b: number) => a % b,
-        exponent: (a: number, b: number) => a ** b,
-      }[piece]
+      const f = operatorComputer[piece]
       if (f === undefined) {
         throw new Error(`unrecognized operator "${piece}"`)
       }
@@ -125,7 +127,7 @@ export function baseDecomposition(
 export function factorization(
   target: number,
   baseArray: number[],
-  solver: (target: number, baseArray: number[]) => MathList,
+  solver: (target: number, baseArray: number[]) => MathList | "impossible",
 ): MathList[] {
   if (target < 1) {
     return []
@@ -143,7 +145,11 @@ export function factorization(
     if (baseArray.includes(piece)) {
       mathList.push(piece)
     } else {
-      mathList.push(...solver(piece, baseArray))
+      let pieceMathList = solver(piece, baseArray)
+      if (pieceMathList === "impossible") {
+        return []
+      }
+      mathList.push(...pieceMathList)
     }
     if (k > 0) {
       mathList.push("multiply")

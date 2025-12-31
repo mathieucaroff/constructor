@@ -36,9 +36,14 @@ export function createConstructor(
       }
 
       const solver = (target: number, baseArray: number[]) => {
-        return createConstructor(operationSet, baseArray, target, {
-          baseDecompositionOnly: true,
-        }).obtain()[0].math
+        const solutionList =
+          createConstructor(operationSet, baseArray, target, {
+            baseDecompositionOnly: true,
+          }).obtain() || []
+        if (solutionList.length === 0) {
+          return "impossible"
+        }
+        return solutionList[0].math
       }
       const addFactorisationSolutionSet = (target: number, extra: MathList) => {
         if (target >= 1) {
